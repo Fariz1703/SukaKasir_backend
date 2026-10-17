@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import status
 
 from core.exception import AppException
+from models.product import Product
 from models.transaction import Transaction
 from models.transactionItem import TransactionItem
 from schemas.transactionItem import TransactionItemCreate, TransactionItemUpdate
@@ -9,6 +10,7 @@ from service.product import get_some_product,get_product
 from service.productSupplier import get_product_supplier
 from service.transactionType import get_TransactionType
 from service.transaction import get_transaction
+from service.product import update_product
 
 def create_transaction_item_out(
     db: Session,
@@ -33,6 +35,21 @@ def create_transaction_item_out(
         quantity=transaction_item_data.quantity,
     )
 
+    
+
+    new_product_quantity =Product(stock=product.stock - transaction_item_data.quantity)
+
+    if new_product_quantity.stock < 0:
+        raise AppException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            message=f"Product with id {product.id} has insufficient stock"
+        )
+
+    update_product(
+        db,
+        product.id,
+        product_data=new_product_quantity
+    )
     db.add(transaction_item)
     db.commit()
     db.refresh(transaction_item)
@@ -49,11 +66,31 @@ def create_transaction_item_in(
         transaction_item_data.product_supplier_id
     )
 
+    product = get_product(
+        db,
+        transaction_item_data.product_id
+    )
+
     if product_supplier is None:
         raise AppException(
             status_code=status.HTTP_404_NOT_FOUND,
             message=f"Product with id {transaction_item_data.product_id} not found"
         )
+
+    if transaction_item_data.quantity <= 0:
+        raise AppException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            message="Quantity must be greater than zero"
+        )
+
+    new_product_quantity =Product(stock=product.stock + transaction_item_data.quantity)
+
+    update_product(
+        db,
+        product.id,
+        product_data=new_product_quantity
+    )
+
 
     transaction_item = TransactionItem(
         product_id=product_supplier.product_id,

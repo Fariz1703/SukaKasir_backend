@@ -6,6 +6,7 @@ class ProductBase(BaseModel):
     name : str
     unit_id : int
     sku : str
+    stock : int
     unit_size : int
     sell_price : int
 
@@ -23,6 +24,7 @@ class ProductUpdate(BaseModel):
     category_id : int | None = None
     name : str | None = None
     unit_id : int | None = None
+    stock : int | None = None
     sku : str | None = None
     unit_size : int | None = None
     sell_price : int | None = None

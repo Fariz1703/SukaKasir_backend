@@ -72,6 +72,8 @@ def update_product(
         product.unit_id = product_data.unit_id
     if product_data.sku is not None:
         product.sku = product_data.sku
+    if product_data.stock is not None:
+        product.stock = product_data.stock
     if product_data.unit_size is not None:
         product.unit_size = product_data.unit_size
     if product_data.sell_price is not None:

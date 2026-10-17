@@ -17,6 +17,7 @@ from api.transaction import router as transaction_router
 from api.transactionItem import router as transaction_item_router
 from api.productSupplier import router as product_supplier_router
 from api.supplier import router as supplier_router
+from api.createTransaction import router as create_transaction_router
 
 
 
@@ -31,6 +32,7 @@ app.include_router(transaction_router)
 app.include_router(transaction_item_router)
 app.include_router(product_supplier_router)
 app.include_router(supplier_router)
+app.include_router(create_transaction_router)
 
 @app.exception_handler(AppException)
 async def app_exception_handler(

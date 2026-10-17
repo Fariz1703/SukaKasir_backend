@@ -40,6 +40,11 @@ class Product(Base):
         nullable= False
     )
 
+    stock : Mapped[int] = mapped_column(
+        nullable= False,
+        default=0
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         server_default=func.now()

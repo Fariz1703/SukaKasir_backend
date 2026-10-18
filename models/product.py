@@ -45,6 +45,12 @@ class Product(Base):
         default=0
     )
 
+    image_key : Mapped[str] = mapped_column(
+        String(255),
+        default="images/default_image.jpeg",
+        nullable=True
+    )
+    
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         server_default=func.now()

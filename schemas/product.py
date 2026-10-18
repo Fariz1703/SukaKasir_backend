@@ -6,7 +6,7 @@ class ProductBase(BaseModel):
     name : str
     unit_id : int
     sku : str
-    stock : int
+    image_key : str | None = None
     unit_size : int
     sell_price : int
 
@@ -15,8 +15,10 @@ class ProductCreate(ProductBase):
 
 class ProductResponse(ProductBase):
     id : int
+    stock : int
     created_at:datetime
     updated_at:datetime
+    image_url:str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -28,3 +30,4 @@ class ProductUpdate(BaseModel):
     sku : str | None = None
     unit_size : int | None = None
     sell_price : int | None = None
+    image_key : str | None = None

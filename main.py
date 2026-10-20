@@ -32,12 +32,12 @@ from api.mobile.V1.transactionType import router as mobile_transactionType_route
 
 app_mobile = FastAPI(
     title="Mobile API",
-    docs_url="/docs",
+    docs_url="/mobile",
     openapi_url="/openapi.json",
 )
 app_web = FastAPI(
     title="Web API",
-    docs_url="/docs",
+    docs_url="/web",
     openapi_url="/openapi.json",
 )
 # menjalankan perintah uvicorn main:app --reload untuk menjalankan server
@@ -61,8 +61,8 @@ app_mobile.include_router(mobile_transactionType_router)
 
 app = FastAPI(title="Main API")
 
-app.mount("/web", app_web)
-app.mount("/mobile", app_mobile)
+app.mount("/docs", app_web)
+app.mount("/docs", app_mobile)
 
 @app.exception_handler(AppException)
 async def app_exception_handler(

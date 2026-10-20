@@ -5,8 +5,8 @@ from core.exception import AppException
 from models.product import Product
 from models.transaction import Transaction
 from models.transactionItem import TransactionItem
-from schemas.transactionItem import TransactionItemCreate, TransactionItemUpdate
-from service.product import get_some_product,get_product
+from schemas.common.transactionItem import TransactionItemCreate, TransactionItemUpdate
+from service.product import get_product
 from service.productSupplier import get_product_supplier
 from service.transactionType import get_TransactionType
 from service.transaction import get_transaction

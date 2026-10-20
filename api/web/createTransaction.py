@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from core.exception import AppException
 from sqlalchemy.orm import Session
 
 from core.exception import AppException
 from database.dependency import get_db
-from schemas.respons import ResponseSchema
-from schemas.createTransaction import (
+from schemas.common.respons import ResponseSchema
+from schemas.common.createTransaction import (
     CreateTransactionCreate,
     CreateTransactionResponse,
 )
@@ -14,8 +14,8 @@ from service.createTranscation import (
 )
 
 router = APIRouter(
-    prefix="/create_transactions",
-    tags=["create_transactions"]
+    prefix="/api/web/create_transactions",
+    tags=["create_transactions Web"]
 )
 
 @router.post(

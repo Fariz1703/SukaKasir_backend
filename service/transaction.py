@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
 
-from core.exception import AppException
 from models.transaction import Transaction
-from schemas.transaction import TransactionCreate, TransactionUpdate
+from schemas.common.transaction import TransactionCreate, TransactionUpdate
 from service.transactionType import get_TransactionType
 
 

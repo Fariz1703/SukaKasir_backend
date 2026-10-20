@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from models.product import Product
-from schemas.product import ProductCreate, ProductUpdate,ProductResponse
+from schemas.common.product import ProductCreate, ProductUpdate,ProductResponse
 from core.storage import get_image_url
 
 def create_product(

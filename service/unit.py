@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from models.unit import Unit
-from schemas.unit import UnitCreate, UnitUpdate
+from schemas.common.unit import UnitCreate, UnitUpdate
 
 
 def create_unit(

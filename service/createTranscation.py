@@ -1,17 +1,14 @@
 from sqlalchemy.orm import Session
 
-from models.product import Product
-from models.productSupplier import ProductSupplier
-from models.transactionItem import TransactionItem
 from service.transaction import create_transaction
 from service.transactionItem import create_transaction_item_switch
 from service.product import get_product
-from schemas.transaction import (
+from schemas.common.transaction import (
     TransactionCreate,
     
 )
-from schemas.transactionItem import TransactionItemCreate
-from schemas.createTransaction import CreateTransactionCreate,CreateTransactionResponse,TransactionItemResponse
+from schemas.common.transactionItem import TransactionItemCreate
+from schemas.common.createTransaction import CreateTransactionCreate,CreateTransactionResponse,TransactionItemResponse
 
 def CreateCreateTransaction(
     db: Session,

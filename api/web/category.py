@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from core.exception import AppException
 from sqlalchemy.orm import Session
 
 from core.exception import AppException
 from database.dependency import get_db
-from schemas.respons import ResponseSchema
-from schemas.category import (
+from schemas.common.respons import ResponseSchema
+from schemas.common.category import (
     CategoryCreate,
     CategoryResponse,
     CategoryUpdate,
@@ -20,8 +20,8 @@ from service.category import (
 
 
 router = APIRouter(
-    prefix="/categories",
-    tags=["Categories"]
+    prefix="/api/web/categories",
+    tags=["categories Web"]
 )
 
 

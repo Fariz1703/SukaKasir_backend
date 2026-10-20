@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from models.transactionType import TransactionType
-from schemas.transactionType import TransactionTypeCreate, TransactionTypeUpdate
+from schemas.common.transactionType import TransactionTypeCreate, TransactionTypeUpdate
 
 
 def create_TransactionType(

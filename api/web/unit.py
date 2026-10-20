@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from core.exception import AppException
 from sqlalchemy.orm import Session
 
 from core.exception import AppException
 from database.dependency import get_db
-from schemas.respons import ResponseSchema
-from schemas.unit import (
+from schemas.common.respons import ResponseSchema
+from schemas.common.unit import (
     UnitCreate,
     UnitResponse,
     UnitUpdate,
@@ -20,8 +20,8 @@ from service.unit import (
 
 
 router = APIRouter(
-    prefix="/units",
-    tags=["Units"]
+    prefix="/api/web/units",
+    tags=["units Web"]
 )
 
 

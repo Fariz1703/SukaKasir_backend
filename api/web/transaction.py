@@ -1,41 +1,40 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from core.exception import AppException
 from sqlalchemy.orm import Session
 
 from core.exception import AppException
 from database.dependency import get_db
-from schemas.respons import ResponseSchema
-from schemas.transactionItem import (
-    TransactionItemCreate,
-    TransactionItemResponse,
-    TransactionItemUpdate,
+from schemas.common.respons import ResponseSchema
+from schemas.common.transaction import (
+    TransactionCreate,
+    TransactionResponse,
+    TransactionUpdate,
 )
-from service.transactionItem import (
-    create_transaction_item_switch,
-    update_transaction_item_switch,
-    get_transaction_item,
-    get_transaction_items,
-    delete_transaction_item,
+from service.transaction import (
+    create_transaction,
+    get_transaction,
+    get_transactions,
+    update_transaction,
+    delete_transaction,
 )
-
 
 
 router = APIRouter(
-    prefix="/transaction_items",
-    tags=["transaction_items"]
+    prefix="/api/web/transactions",
+    tags=["transactions web"]
 )
 
 
 @router.post(
     "",
-    response_model=ResponseSchema[TransactionItemResponse],
+    response_model=ResponseSchema[TransactionResponse],
     status_code=status.HTTP_201_CREATED
 )
 def create(
-    transaction_data: TransactionItemCreate,
+    transaction_data: TransactionCreate,
     db: Session = Depends(get_db)
 ):
-    transaction = create_transaction_item_switch(db, transaction_data)
+    transaction = create_transaction(db, transaction_data)
 
     if transaction is None:
         raise AppException(
@@ -53,12 +52,12 @@ def create(
 
 @router.get(
     "",
-    response_model=ResponseSchema[list[TransactionItemResponse]]
+    response_model=ResponseSchema[list[TransactionResponse]]
 )
 def get_all(
     db: Session = Depends(get_db)
 ):
-    transaction = get_transaction_items(db)
+    transaction = get_transactions(db)
 
     if transaction is None:
         raise AppException(
@@ -76,13 +75,13 @@ def get_all(
 
 @router.get(
     "/{transaction__id}",
-    response_model=ResponseSchema[TransactionItemResponse]
+    response_model=ResponseSchema[TransactionResponse]
 )
 def get_one(
     transaction__id: int,
     db: Session = Depends(get_db)
 ):
-    transaction = get_transaction_item(db, transaction__id)
+    transaction = get_transaction(db, transaction__id)
 
     if transaction is None:
         raise AppException(
@@ -100,14 +99,14 @@ def get_one(
 
 @router.patch(
     "/{transaction__id}",
-    response_model=ResponseSchema[TransactionItemResponse]
+    response_model=ResponseSchema[TransactionResponse]
 )
 def update(
     transaction__id: int,
-    transaction__data: TransactionItemUpdate,
+    transaction__data: TransactionUpdate,
     db: Session = Depends(get_db)
 ):
-    transaction = update_transaction_item_switch(
+    transaction = update_transaction(
         db,
         transaction__id,
         transaction__data
@@ -130,13 +129,13 @@ def update(
 @router.delete(
     "/{transaction__id}",
     status_code=status.HTTP_200_OK,
-    response_model=ResponseSchema[TransactionItemResponse]
+    response_model=ResponseSchema[TransactionResponse]
 )
 def delete(
     transaction__id: int,
     db: Session = Depends(get_db)
 ):
-    transaction = delete_transaction_item(db, transaction__id)
+    transaction = delete_transaction(db, transaction__id)
 
     if transaction is None:
         raise AppException(

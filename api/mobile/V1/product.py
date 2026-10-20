@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 
 from core.exception import AppException
 from database.dependency import get_db
-from schemas.respons import ResponseSchema
-from schemas.product import (
+from schemas.common.respons import ResponseSchema
+from schemas.common.product import (
     ProductCreate,
     ProductResponse,
     ProductUpdate,
@@ -25,11 +25,10 @@ from core.storage import upload_image
 
 
 router = APIRouter(
-    prefix="/products",
-    tags=["Products"]
+    prefix="/api/v1/products",
+    tags=["products Mobile V1"]
 )
 
- 
 @router.post(
     "",
     response_model=ResponseSchema[ProductResponse],

@@ -6,33 +6,50 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from database.dependency import get_db
-from schemas.respons import ResponseSchema
+from schemas.common.respons import ResponseSchema
 
 from core.exception import AppException
-from api.category import router as category_router
-from api.unit import router as unit_router
-from api.transactionType import router as transaction_type_router
-from api.product import router as product_router
-from api.transaction import router as transaction_router
-from api.transactionItem import router as transaction_item_router
-from api.productSupplier import router as product_supplier_router
-from api.supplier import router as supplier_router
-from api.createTransaction import router as create_transaction_router
 
+#web router
+from api.web.category import router as web_category_router
+from api.web.unit import router as web_unit_router
+from api.web.transactionType import router as web_transaction_type_router
+from api.web.product import router as web_product_router
+from api.web.transaction import router as web_transaction_router
+from api.web.transactionItem import router as web_transaction_item_router
+from api.web.productSupplier import router as web_product_supplier_router
+from api.web.supplier import router as web_supplier_router
+from api.web.createTransaction import router as web_create_transaction_router
 
+#mobile route
+from api.mobile.V1.createTransaction import router as create_transaction_router
+from api.mobile.V1.product import router as mobile_product_router
+from api.mobile.V1.category import router as mobile_category_router
+from api.mobile.V1.supplier import router as mobile_supplier_router
+from api.mobile.V1.unit import router as mobile_unit_router
+from api.mobile.V1.transactionType import router as mobile_transactionType_router
 
 
 app = FastAPI()
 # menjalankan perintah uvicorn main:app --reload untuk menjalankan server
-app.include_router(category_router)
-app.include_router(unit_router)
-app.include_router(transaction_type_router)
-app.include_router(product_router)
-app.include_router(transaction_router)
-app.include_router(transaction_item_router)
-app.include_router(product_supplier_router)
-app.include_router(supplier_router)
+app.include_router(web_category_router)
+app.include_router(web_unit_router)
+app.include_router(web_transaction_type_router)
+app.include_router(web_product_router)
+app.include_router(web_transaction_router)
+app.include_router(web_transaction_item_router)
+app.include_router(web_product_supplier_router)
+app.include_router(web_supplier_router)
+app.include_router(web_create_transaction_router)
+
+#Mobile Route
 app.include_router(create_transaction_router)
+app.include_router(mobile_product_router)
+app.include_router(mobile_category_router)
+app.include_router(mobile_supplier_router)
+app.include_router(mobile_unit_router)
+app.include_router(mobile_transactionType_router)
+
 
 @app.exception_handler(AppException)
 async def app_exception_handler(

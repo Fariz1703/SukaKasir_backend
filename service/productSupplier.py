@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from models.productSupplier import ProductSupplier
-from schemas.productSupplier import ProductSupplierCreate, ProductSupplierUpdate
+from schemas.common.productSupplier import ProductSupplierCreate, ProductSupplierUpdate
 
 def create_product_supplier(
     db: Session,

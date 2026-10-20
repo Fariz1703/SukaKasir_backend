@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from core.exception import AppException
 from sqlalchemy.orm import Session
 
 from core.exception import AppException
 from database.dependency import get_db
-from schemas.respons import ResponseSchema
-from schemas.productSupplier import (
+from schemas.common.respons import ResponseSchema
+from schemas.common.productSupplier import (
     ProductSupplierCreate,
     ProductSupplierResponse,
     ProductSupplierUpdate,
@@ -19,8 +19,8 @@ from service.productSupplier import (
 )
 
 router = APIRouter(
-    prefix="/product_suppliers",
-    tags=["Product_Suppliers"]
+    prefix="/api/web/product_suppliers",
+    tags=["product_suppliers Web"]
 )
 
 @router.post(

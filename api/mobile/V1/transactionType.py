@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from core.exception import AppException
 from sqlalchemy.orm import Session
 
 from core.exception import AppException
 from database.dependency import get_db
-from schemas.respons import ResponseSchema
-from schemas.transactionType import (
+from schemas.common.respons import ResponseSchema
+from schemas.common.transactionType import (
     TransactionTypeCreate,
     TransactionTypeResponse,
     TransactionTypeUpdate,
@@ -20,8 +20,8 @@ from service.transactionType import (
 
 
 router = APIRouter(
-    prefix="/transaction_types",
-    tags=["transaction_types"]
+    prefix="/api/v1/transaction_types",
+    tags=["transcation_type Mobile V1"]
 )
 
 

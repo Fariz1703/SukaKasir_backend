@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from models.category import Category
-from schemas.category import CategoryCreate, CategoryUpdate
+from schemas.common.category import CategoryCreate, CategoryUpdate
 
 
 def create_category(

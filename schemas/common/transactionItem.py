@@ -1,6 +1,4 @@
-from pydantic import BaseModel, ConfigDict
-from datetime import datetime
-from schemas.product import ProductResponse
+from pydantic import BaseModel, ConfigDict 
 
 class TransactionItemBase(BaseModel):
     

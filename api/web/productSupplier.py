@@ -19,7 +19,7 @@ from service.productSupplier import (
 )
 
 router = APIRouter(
-    prefix="/api/web/product_suppliers",
+    prefix="/api/product_suppliers",
     tags=["product_suppliers Web"]
 )
 

@@ -25,7 +25,7 @@ from core.storage import upload_image
 
 
 router = APIRouter(
-    prefix="/api/web/products",
+    prefix="/api/products",
     tags=["products web"]
 )
 

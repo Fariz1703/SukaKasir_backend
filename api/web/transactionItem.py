@@ -21,7 +21,7 @@ from service.transactionItem import (
 
 
 router = APIRouter(
-    prefix="/api/web/transaction_items",
+    prefix="/api/transaction_items",
     tags=["transaction_items Web"]
 )
 

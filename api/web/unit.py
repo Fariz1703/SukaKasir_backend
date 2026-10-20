@@ -20,7 +20,7 @@ from service.unit import (
 
 
 router = APIRouter(
-    prefix="/api/web/units",
+    prefix="/api/units",
     tags=["units Web"]
 )
 

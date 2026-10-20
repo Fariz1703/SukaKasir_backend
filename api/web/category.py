@@ -20,7 +20,7 @@ from service.category import (
 
 
 router = APIRouter(
-    prefix="/api/web/categories",
+    prefix="/api/categories",
     tags=["categories Web"]
 )
 

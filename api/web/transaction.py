@@ -20,7 +20,7 @@ from service.transaction import (
 
 
 router = APIRouter(
-    prefix="/api/web/transactions",
+    prefix="/api/transactions",
     tags=["transactions web"]
 )
 

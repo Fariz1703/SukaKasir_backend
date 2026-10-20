@@ -14,7 +14,7 @@ from service.createTranscation import (
 )
 
 router = APIRouter(
-    prefix="/api/web/create_transactions",
+    prefix="/api/create_transactions",
     tags=["create_transactions Web"]
 )
 

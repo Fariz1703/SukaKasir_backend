@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from helper.commitDbHelper import commit_db
 from models.product import Product
 from schemas.common.product import ProductCreate, ProductUpdate,ProductResponse
 from core.storage import get_image_url
@@ -30,9 +31,8 @@ def create_product(
             sell_price=product_data.sell_price,
         )
 
-    db.add(product)
-    db.commit()
-    db.refresh(product)
+
+    commit_db(db, product)
 
     image_url=get_image_url(product.image_key)
 
@@ -156,8 +156,7 @@ def update_product(
     if product_data.sell_price is not None:
         product.sell_price = product_data.sell_price
 
-    db.commit()
-    db.refresh(product)
+    commit_db(db, product)
 
     image_url=get_image_url(product.image_key)
 
@@ -188,7 +187,7 @@ def delete_product(
     if product is None:
         return None
 
-    db.delete(product)
-    db.commit()
+    commit_db(db, product)
 
     return product
+

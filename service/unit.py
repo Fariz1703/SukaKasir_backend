@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from helper.commitDbHelper import commit_db
 from models.unit import Unit
 from schemas.common.unit import UnitCreate, UnitUpdate
 
@@ -14,9 +15,7 @@ def create_unit(
         description=unit_data.description
     )
 
-    db.add(unit)
-    db.commit()
-    db.refresh(unit)
+    commit_db(db, unit)
 
     return unit
 
@@ -57,8 +56,7 @@ def update_unit(
     if unit_data.description is not None:
         unit.description = unit_data.description
 
-    db.commit()
-    db.refresh(unit)
+    commit_db(db, unit)
 
     return unit
 
@@ -72,8 +70,7 @@ def delete_unit(
 
     if unit is None:
         return None
-
-    db.delete(unit)
-    db.commit()
+    
+    commit_db(db, unit)
 
     return unit

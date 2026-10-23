@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import status
 
 from core.exception import AppException
+from helper.commitDbHelper import commit_db
 from models.product import Product
 from models.transaction import Transaction
 from models.transactionItem import TransactionItem
@@ -50,9 +51,8 @@ def create_transaction_item_out(
         product.id,
         product_data=new_product_quantity
     )
-    db.add(transaction_item)
-    db.commit()
-    db.refresh(transaction_item)
+
+    commit_db(db, transaction_item)
 
     return transaction_item
 
@@ -100,9 +100,7 @@ def create_transaction_item_in(
         product_supplier_id=transaction_item_data.product_supplier_id
     )
 
-    db.add(transaction_item)
-    db.commit()
-    db.refresh(transaction_item)
+    commit_db(db, transaction_item)
 
     return transaction_item
 
@@ -252,8 +250,7 @@ def update_transaction_item_out(
         target_product_supplier_id,
     )
 
-    db.commit()
-    db.refresh(transaction_item)
+    commit_db(db, transaction_item)
 
     return transaction_item
 
@@ -323,8 +320,7 @@ def update_transaction_item_in(
         target_product_supplier_id,
     )
 
-    db.commit()
-    db.refresh(transaction_item)
+    commit_db(db, transaction_item)
 
     return transaction_item
 
@@ -354,12 +350,11 @@ def delete_transaction_item(
     Transaction_id: int
 ) -> Transaction | None:
 
-    Transaction = get_transaction(db, Transaction_id)
+    transaction_item = get_transaction(db, Transaction_id)
 
     if Transaction is None:
         return None
 
-    db.delete(Transaction)
-    db.commit()
+    commit_db(db, transaction_item)
 
-    return Transaction
+    return transaction_item

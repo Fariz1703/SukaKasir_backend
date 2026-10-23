@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from helper.commitDbHelper import commit_db
 from models.transaction import Transaction
 from schemas.common.transaction import TransactionCreate, TransactionUpdate
 from service.transactionType import get_TransactionType
@@ -15,9 +16,7 @@ def create_transaction(
         transaction_type_id=Transaction_data.transaction_type_id,
     )
 
-    db.add(transaction)
-    db.commit()
-    db.refresh(transaction)
+    commit_db(db, transaction)
 
     return transaction
 
@@ -71,8 +70,7 @@ def update_transaction(
     if transaction_data.transaction_type_id is not None:
         transaction.transaction_type_id = transaction_data.transaction_type_id
 
-    db.commit()
-    db.refresh(transaction)
+    commit_db(db, transaction)
 
     return transaction
 
@@ -82,12 +80,11 @@ def delete_transaction(
     Transaction_id: int
 ) -> Transaction | None:
 
-    Transaction = get_transaction(db, Transaction_id)
+    transaction = get_transaction(db, Transaction_id)
 
     if Transaction is None:
         return None
 
-    db.delete(Transaction)
-    db.commit()
+    commit_db(db, transaction)
 
-    return Transaction
+    return transaction

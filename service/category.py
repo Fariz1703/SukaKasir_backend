@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 
+from helper.commitDbHelper import commit_db
 from models.category import Category
+from schemas.common import category
 from schemas.common.category import CategoryCreate, CategoryUpdate
 
 
@@ -14,9 +16,7 @@ def create_category(
         description=category_data.description
     )
 
-    db.add(category)
-    db.commit()
-    db.refresh(category)
+    commit_db(db, category)
 
     return category
 
@@ -57,8 +57,8 @@ def update_category(
     if category_data.description is not None:
         category.description = category_data.description
 
-    db.commit()
-    db.refresh(category)
+
+    commit_db(db, category)
 
     return category
 
@@ -73,7 +73,7 @@ def delete_category(
     if category is None:
         return None
 
-    db.delete(category)
-    db.commit()
+    
+    commit_db(db, category)
 
     return category

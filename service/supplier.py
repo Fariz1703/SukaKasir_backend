@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 
+from helper.commitDbHelper import commit_db
 from models.supplier import Supplier
+from schemas.common import supplier
 from schemas.common.supplier import SupplierCreate, SupplierUpdate
 
 def create_supplier(
@@ -13,9 +15,7 @@ def create_supplier(
         description=supplier_data.description,
     )
 
-    db.add(supplier)
-    db.commit()
-    db.refresh(supplier)
+    commit_db(db, supplier)
 
     return supplier
 
@@ -53,7 +53,7 @@ def update_supplier(
     if supplier_data.description is not None:
         supplier.description = supplier_data.description
 
-    db.commit()
+    commit_db(db, supplier)
 
     return supplier
 
@@ -67,7 +67,6 @@ def delete_supplier(
     if supplier is None:
         return None
 
-    db.delete(supplier)
-    db.commit()
-
+    commit_db(db, supplier)
+    
     return supplier

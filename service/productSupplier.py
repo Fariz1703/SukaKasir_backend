@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 
+from helper.commitDbHelper import commit_db
 from models.productSupplier import ProductSupplier
+from schemas.common import category
 from schemas.common.productSupplier import ProductSupplierCreate, ProductSupplierUpdate
 
 def create_product_supplier(
@@ -14,9 +16,8 @@ def create_product_supplier(
         buy_price=product_supplier_data.buy_price
     )
 
-    db.add(product_supplier)
-    db.commit()
-    db.refresh(product_supplier)
+
+    commit_db(db, product_supplier)
 
     return product_supplier
 
@@ -59,8 +60,7 @@ def update_product_supplier(
     if product_supplier_data.buy_price is not None:
         product_supplier.buy_price = product_supplier_data.buy_price
 
-    db.commit()
-    db.refresh(product_supplier)
+    commit_db(db, product_supplier)
 
     return product_supplier
 
@@ -74,7 +74,6 @@ def delete_product_supplier(
     if product_supplier is None:
         return None
 
-    db.delete(product_supplier)
-    db.commit()
+    commit_db(db, product_supplier)
 
     return product_supplier

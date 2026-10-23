@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from helper.commitDbHelper import commit_db
 from models.transactionType import TransactionType
 from schemas.common.transactionType import TransactionTypeCreate, TransactionTypeUpdate
 
@@ -15,9 +16,7 @@ def create_TransactionType(
         need_supplier=transactionTypeData.need_supplier
     )
 
-    db.add(transactionType)
-    db.commit()
-    db.refresh(transactionType)
+    commit_db(db, transactionType)
 
     return transactionType
 
@@ -46,22 +45,21 @@ def update_TransactionType(
     TransactionType_data: TransactionTypeUpdate
 ) -> TransactionType | None:
 
-    TransactionType = get_TransactionType(db, TransactionType_id)
+    transactionType = get_TransactionType(db, TransactionType_id)
 
-    if TransactionType is None:
+    if transactionType is None:
         return None
 
     if TransactionType_data.name is not None:
-        TransactionType.name = TransactionType_data.name
+        transactionType.name = TransactionType_data.name
 
     if TransactionType_data.description is not None:
-        TransactionType.description = TransactionType_data.description
+        transactionType.description = TransactionType_data.description
 
     if TransactionType_data.need_supplier is not None:
-        TransactionType.need_supplier = TransactionType_data.need_supplier
+        transactionType.need_supplier = TransactionType_data.need_supplier
 
-    db.commit()
-    db.refresh(TransactionType)
+    commit_db(db, transactionType)
 
     return TransactionType
 
@@ -71,12 +69,11 @@ def delete_TransactionType(
     TransactionType_id: int
 ) -> TransactionType | None:
 
-    TransactionType = get_TransactionType(db, TransactionType_id)
+    transactionType = get_TransactionType(db, TransactionType_id)
 
-    if TransactionType is None:
+    if transactionType is None:
         return None
 
-    db.delete(TransactionType)
-    db.commit()
+    commit_db(db, transactionType)
 
-    return TransactionType
+    return transactionType

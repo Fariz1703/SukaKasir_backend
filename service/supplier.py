@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
+from fastapi import status
 
-from helper.commitDbHelper import commit_db
+from core.exception import AppException
 from models.supplier import Supplier
-from schemas.common import supplier
+from repository import productSupplier as productSupplier_repository
 from schemas.common.supplier import SupplierCreate, SupplierUpdate
 
 def create_supplier(
@@ -15,26 +16,32 @@ def create_supplier(
         description=supplier_data.description,
     )
 
-    commit_db(db, supplier)
+    try:
+        productSupplier_repository.create(db, supplier)
+        db.commit()
+        db.refresh(supplier)
+        return supplier
 
-    return supplier
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create supplier",
+        ) from exc
+
 
 def get_supplier(
     db: Session,
     supplier_id: int
 ) -> Supplier | None:
 
-    return (
-        db.query(Supplier)
-        .filter(Supplier.id == supplier_id)
-        .first()
-    )
+    return productSupplier_repository.get_product_supplier_by_id(db, supplier_id)
 
 def get_suppliers(
     db: Session
 ) -> list[Supplier]:
 
-    return db.query(Supplier).all()
+    return productSupplier_repository.get_product_suppliers(db)
 
 def update_supplier(
     db: Session,
@@ -53,9 +60,17 @@ def update_supplier(
     if supplier_data.description is not None:
         supplier.description = supplier_data.description
 
-    commit_db(db, supplier)
+    try:
+        db.commit()
+        db.refresh(supplier)
+        return supplier
 
-    return supplier
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to update supplier",
+        ) from exc
 
 def delete_supplier(
     db: Session,
@@ -67,6 +82,15 @@ def delete_supplier(
     if supplier is None:
         return None
 
-    commit_db(db, supplier)
+    try:
+        productSupplier_repository.delete_product_supplier(db, supplier)
+        db.commit()
+        return supplier
+
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to delete supplier",
+        ) from exc
     
-    return supplier

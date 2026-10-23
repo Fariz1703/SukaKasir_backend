@@ -2,26 +2,27 @@ from sqlalchemy.orm import Session
 from fastapi import status
 
 from core.exception import AppException
-from helper.commitDbHelper import commit_db
 from models.product import Product
 from models.transaction import Transaction
 from models.transactionItem import TransactionItem
 from schemas.common.transactionItem import TransactionItemCreate, TransactionItemUpdate
-from service.product import get_product
-from service.productSupplier import get_product_supplier
-from service.transactionType import get_TransactionType
-from service.transaction import get_transaction
 from service.product import update_product
+from repository import transactionItem as transaction_item_repository
+from repository import product as product_repository
+from repository import transaction as transaction_repository
+from repository import productSupplier as product_supplier_repository 
+from repository import transactionType as transaction_type_repository
+from repository import transactionItem as transaction_item_repository
 
 def create_transaction_item_out(
     db: Session,
     transaction_item_data: TransactionItemCreate,
 ) -> TransactionItem:
 
-    product = get_product(
+    product = product_repository.get_product_by_id(
         db,
         transaction_item_data.product_id
-    )
+        )
 
     if product is None:
         raise AppException(
@@ -52,21 +53,30 @@ def create_transaction_item_out(
         product_data=new_product_quantity
     )
 
-    commit_db(db, transaction_item)
+    try:
+        transaction_item_repository.create(db, transaction_item)
+        db.commit()
+        db.refresh(transaction_item)
+        return transaction_item
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create transaction item",
+        ) from exc
 
-    return transaction_item
 
 def create_transaction_item_in(
     db: Session,
     transaction_item_data: TransactionItemCreate,
 ) -> TransactionItem:
 
-    product_supplier = get_product_supplier(
+    product_supplier = product_supplier_repository.get_product_supplier_by_id(
         db,
         transaction_item_data.product_supplier_id
     )
 
-    product = get_product(
+    product = product_repository.get_product_by_id(
         db,
         transaction_item_data.product_id
     )
@@ -100,20 +110,29 @@ def create_transaction_item_in(
         product_supplier_id=transaction_item_data.product_supplier_id
     )
 
-    commit_db(db, transaction_item)
+    try:
+        transaction_item_repository.create(db, transaction_item)
+        db.commit()
+        db.refresh(transaction_item)
+        return transaction_item
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create transaction item",
+        ) from exc
 
-    return transaction_item
 
 def create_transaction_item_switch(
         db: Session, 
         transaction_item_data: TransactionItemCreate
 ) -> TransactionItem:
-    get_transaction_item = get_transaction(
+    get_transaction_item = product_repository.get_product_by_id(
         db,
         transaction_item_data.transaction_id
     )   
     
-    get_transaction_type_item = get_TransactionType(
+    get_transaction_type_item = transaction_type_repository.get_transaction_type_by_id(
         db,
         get_transaction_item.transaction_type_id
     )
@@ -140,7 +159,7 @@ def validate_transaction_item_by_transaction_type(
     transaction_id: int,
     product_supplier_id: int | None,
 ) -> None:
-    transaction = get_transaction(db, transaction_id)
+    transaction = transaction_repository.get_transaction_by_id(db, transaction_id)
 
     if transaction is None:
         raise AppException(
@@ -148,7 +167,7 @@ def validate_transaction_item_by_transaction_type(
             message=f"Transaction with id {transaction_id} not found"
         )
 
-    transaction_type = get_TransactionType(
+    transaction_type = transaction_type_repository.get_transaction_type_by_id(
         db,
         transaction.transaction_type_id
     )
@@ -172,18 +191,14 @@ def get_transaction_item(
     Transaction_item_id: int
 ) -> TransactionItem | None:
 
-    return (
-        db.query(TransactionItem)
-        .filter(TransactionItem.id == Transaction_item_id)
-        .first()
-    )
+    return transaction_item_repository.get_transaction_item_by_id(db, Transaction_item_id)
 
 
 def get_transaction_items(
     db: Session
 ) -> list[TransactionItem]:
 
-    return db.query(TransactionItem).all()
+    return transaction_item_repository.get_transaction_items(db)
 
 
 def update_transaction_item_out(
@@ -200,7 +215,7 @@ def update_transaction_item_out(
         return None
 
     if transaction_item_data.product_id is not None:
-        product = get_product(
+        product = product_repository.get_product_by_id(
             db,
             transaction_item_data.product_id,
         )
@@ -214,7 +229,7 @@ def update_transaction_item_out(
         transaction_item.product_id = product.id
 
     if transaction_item_data.transaction_id is not None:
-        transaction = get_transaction(
+        transaction = transaction_repository.get_transaction_by_id(
             db,
             transaction_item_data.transaction_id,
         )
@@ -250,9 +265,16 @@ def update_transaction_item_out(
         target_product_supplier_id,
     )
 
-    commit_db(db, transaction_item)
+    try:
+        db.commit()
+        return transaction_item
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create transaction item",
+        ) from exc
 
-    return transaction_item
 
 
 def update_transaction_item_in(
@@ -269,7 +291,7 @@ def update_transaction_item_in(
         return None
 
     if transaction_item_data.product_supplier_id is not None:
-        product_supplier = get_product_supplier(
+        product_supplier = product_supplier_repository.get_product_supplier_by_id(
             db,
             transaction_item_data.product_supplier_id,
         )
@@ -284,7 +306,7 @@ def update_transaction_item_in(
         transaction_item.product_supplier_id = product_supplier.id
 
     if transaction_item_data.transaction_id is not None:
-        transaction = get_transaction(
+        transaction = transaction_repository.get_transaction_by_id(
             db,
             transaction_item_data.transaction_id,
         )
@@ -320,9 +342,16 @@ def update_transaction_item_in(
         target_product_supplier_id,
     )
 
-    commit_db(db, transaction_item)
+    try:
+        db.commit()
+        return transaction_item
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to update transaction item",
+        ) from exc
 
-    return transaction_item
 
 
 def update_transaction_item_switch(
@@ -331,12 +360,12 @@ def update_transaction_item_switch(
         transaction_item_data: TransactionItemUpdate
 ) -> TransactionItem | None:
 
-    get_transaction_item = get_transaction(
+    get_transaction_item = transaction_repository.get_transaction_by_id(
         db,
         transaction_item_data.transaction_id
     )   
     
-    get_transaction_type_item = get_TransactionType(
+    get_transaction_type_item = transaction_type_repository.get_transaction_type_by_id(
         db,
         get_transaction_item.transaction_type_id
     )
@@ -350,11 +379,22 @@ def delete_transaction_item(
     Transaction_id: int
 ) -> Transaction | None:
 
-    transaction_item = get_transaction(db, Transaction_id)
+    transaction_item = transaction_item_repository.get_transaction_item_by_id(
+        db,
+        Transaction_id
+    )
 
-    if Transaction is None:
+    if transaction_item is None:
         return None
 
-    commit_db(db, transaction_item)
+    try:
+        transaction_item_repository.delete_transaction_item(db, transaction_item)
+        db.commit()
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to delete transaction item",
+        ) from exc
 
     return transaction_item

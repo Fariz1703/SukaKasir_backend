@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from fastapi import status
 
-from helper.commitDbHelper import commit_db
+from core.exception import AppException
+from repository import product as product_repository
 from models.product import Product
 from schemas.common.product import ProductCreate, ProductUpdate,ProductResponse
 from core.storage import get_image_url
@@ -32,43 +34,52 @@ def create_product(
         )
 
 
-    commit_db(db, product)
+    try:
+        product_repository.create(db, product)
+        db.commit()
+        db.refresh(product)
 
-    image_url=get_image_url(product.image_key)
+        image_url=get_image_url(product.image_key)
 
-    product_response = ProductResponse(
-        id=product.id,
-        name=product.name,
-        category_id=product.category_id,
-        unit_id=product.unit_id,
-        sku=product.sku,
-        unit_size=product.unit_size,
-        sell_price=product.sell_price,
-        stock=product.stock,
-        created_at=product.created_at,
-        updated_at=product.updated_at,
-        image_url=image_url,
-    )
+        product_response = ProductResponse(
+            id=product.id,
+            name=product.name,
+            category_id=product.category_id,
+            unit_id=product.unit_id,
+            sku=product.sku,
+            unit_size=product.unit_size,
+            sell_price=product.sell_price,
+            stock=product.stock,
+            created_at=product.created_at,
+            updated_at=product.updated_at,
+            image_url=image_url,
+        )
 
-    return product_response
+        return product_response
+
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create product",
+        ) from exc
+
+
 
 def get_product(
     db: Session,
     product_id: int
 ) -> Product | None:
 
-    return (
-        db.query(Product)
-        .filter(Product.id == product_id)
-        .first()
-    )
+    return product_repository.get_product_by_id(db, product_id)
 
 def get_some_product(
     db: Session,
     product_id: list[int]
 ) -> list[ProductResponse]:
 
-    Products=db.query(Product).filter(Product.id.in_(product_id)).all()
+
+    Products=product_repository.get_some_products(db, product_id)
 
     product_data=[]
 
@@ -99,7 +110,7 @@ def get_products(
     db: Session
 ) -> list[ProductResponse]:
 
-    Products= db.query(Product).all()
+    Products= product_repository.get_products(db)
     product_data=[]
 
     for product in Products:
@@ -156,25 +167,34 @@ def update_product(
     if product_data.sell_price is not None:
         product.sell_price = product_data.sell_price
 
-    commit_db(db, product)
+    try:
+        db.commit()
+        db.refresh(product)
 
-    image_url=get_image_url(product.image_key)
+        image_url=get_image_url(product.image_key)
 
-    product_response = ProductResponse(
-        id=product.id,
-        name=product.name,
-        category_id=product.category_id,
-        unit_id=product.unit_id,
-        sku=product.sku,
-        unit_size=product.unit_size,
-        sell_price=product.sell_price,
-        stock=product.stock,
-        created_at=product.created_at,
-        updated_at=product.updated_at,
-        image_url=image_url,
+        product_response = ProductResponse(
+            id=product.id,
+            name=product.name,
+            category_id=product.category_id,
+            unit_id=product.unit_id,
+            sku=product.sku,
+            unit_size=product.unit_size,
+            sell_price=product.sell_price,
+            stock=product.stock,
+            created_at=product.created_at,
+            updated_at=product.updated_at,
+            image_url=image_url,
         )
 
-    return product_response
+        return product_response
+
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to update product",
+        ) from exc
 
 
 def delete_product(
@@ -187,7 +207,14 @@ def delete_product(
     if product is None:
         return None
 
-    commit_db(db, product)
+    try:
+        product_repository.delete_product(db, product)
+        db.commit()
+        return product
 
-    return product
-
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to delete product",
+        ) from exc

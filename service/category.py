@@ -1,24 +1,36 @@
+from sqlalchemy import exc
 from sqlalchemy.orm import Session
+from fastapi import status
 
-from helper.commitDbHelper import commit_db
+from core.exception import AppException
 from models.category import Category
+from repository import category as category_repository
 from schemas.common import category
 from schemas.common.category import CategoryCreate, CategoryUpdate
 
 
 def create_category(
     db: Session,
-    category_data: CategoryCreate
+    category_data: CategoryCreate,
 ) -> Category:
 
     category = Category(
         name=category_data.name,
-        description=category_data.description
+        description=category_data.description,
     )
 
-    commit_db(db, category)
+    try:
+        category_repository.create(db, category)
+        db.commit()
+        db.refresh(category)
+        return category
 
-    return category
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create category",
+        ) from exc
 
 
 def get_category(
@@ -26,19 +38,13 @@ def get_category(
     category_id: int
 ) -> Category | None:
 
-    return (
-        db.query(Category)
-        .filter(Category.id == category_id)
-        .first()
-    )
-
+    return category_repository.get_category_by_id(db, category_id)
 
 def get_categories(
     db: Session
 ) -> list[Category]:
 
-    return db.query(Category).all()
-
+    return category_repository.get_categories(db)
 
 def update_category(
     db: Session,
@@ -46,7 +52,7 @@ def update_category(
     category_data: CategoryUpdate
 ) -> Category | None:
 
-    category = get_category(db, category_id)
+    category = category_repository.get_category_by_id(db, category_id)
 
     if category is None:
         return None
@@ -58,9 +64,18 @@ def update_category(
         category.description = category_data.description
 
 
-    commit_db(db, category)
+    try:
+        db.commit()
+        db.refresh(category)
+        return category
 
-    return category
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to update category",
+        ) from exc
+
 
 
 def delete_category(
@@ -68,12 +83,19 @@ def delete_category(
     category_id: int
 ) -> Category | None:
 
-    category = get_category(db, category_id)
+    category = category_repository.get_category_by_id(db, category_id)
 
     if category is None:
         return None
 
-    
-    commit_db(db, category)
+    try:
+        category_repository.delete_category(db, category)
+        db.commit()
+        return category
 
-    return category
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to delete category",
+        ) from exc

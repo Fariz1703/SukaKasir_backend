@@ -1,7 +1,10 @@
-from sqlalchemy.orm import Session
 
-from helper.commitDbHelper import commit_db
+from sqlalchemy.orm import Session
+from fastapi import status
+
 from models.productSupplier import ProductSupplier
+from repository import productSupplier as product_supplier_repository
+from core.exception import AppException
 from schemas.common import category
 from schemas.common.productSupplier import ProductSupplierCreate, ProductSupplierUpdate
 
@@ -16,27 +19,32 @@ def create_product_supplier(
         buy_price=product_supplier_data.buy_price
     )
 
+    try:
+        product_supplier_repository.create(db, product_supplier)
+        db.commit()
+        db.refresh(product_supplier)
+        return product_supplier
 
-    commit_db(db, product_supplier)
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create product supplier",
+        ) from exc
 
-    return product_supplier
 
 def get_product_supplier(
     db: Session,
     product_supplier_id: int
 ) -> ProductSupplier | None:
 
-    return (
-        db.query(ProductSupplier)
-        .filter(ProductSupplier.id == product_supplier_id)
-        .first()
-    )
+    return product_supplier_repository.get_product_supplier_by_id(db, product_supplier_id)
 
 def get_product_suppliers(
     db: Session
 ) -> list[ProductSupplier]:
 
-    return db.query(ProductSupplier).all()
+    return product_supplier_repository.get_product_suppliers(db)
 
 def update_product_supplier(
     db: Session,
@@ -44,11 +52,7 @@ def update_product_supplier(
     product_supplier_data: ProductSupplierUpdate
 ) -> ProductSupplier | None:
 
-    product_supplier = (
-        db.query(ProductSupplier)
-        .filter(ProductSupplier.id == product_supplier_id)
-        .first()
-    )
+    product_supplier = product_supplier_repository.get_product_supplier_by_id(db, product_supplier_id)
 
     if not product_supplier:
         return None
@@ -60,9 +64,17 @@ def update_product_supplier(
     if product_supplier_data.buy_price is not None:
         product_supplier.buy_price = product_supplier_data.buy_price
 
-    commit_db(db, product_supplier)
+    try:
+        db.commit()
+        db.refresh(product_supplier)
+        return product_supplier
 
-    return product_supplier
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to update product supplier",
+        ) from exc
 
 def delete_product_supplier(
     db: Session,
@@ -74,6 +86,14 @@ def delete_product_supplier(
     if product_supplier is None:
         return None
 
-    commit_db(db, product_supplier)
-
-    return product_supplier
+    try:
+        product_supplier_repository.delete_product_supplier(db, product_supplier)
+        db.commit()
+        return product_supplier
+    
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to delete product supplier",
+        ) from exc

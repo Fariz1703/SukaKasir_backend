@@ -1,6 +1,8 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session  
+from fastapi import status
 
-from helper.commitDbHelper import commit_db
+from core.exception import AppException
+from repository import transaction as transaction_repository
 from models.transaction import Transaction
 from schemas.common.transaction import TransactionCreate, TransactionUpdate
 from service.transactionType import get_TransactionType
@@ -16,44 +18,39 @@ def create_transaction(
         transaction_type_id=Transaction_data.transaction_type_id,
     )
 
-    commit_db(db, transaction)
+    try:
+        transaction_repository.create(db, transaction)
+        db.commit()
+        db.refresh(transaction)
+        return transaction
 
-    return transaction
-
-def get_transaction(
-    db: Session,
-    Transaction_id: int
-) -> Transaction | None:
-
-    return (
-        db.query(Transaction)
-        .filter(Transaction.id == Transaction_id)
-        .first()
-    )
-
-def get_transactions(
-    db: Session
-) -> list[Transaction]:
-
-    return db.query(Transaction).all()
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create supplier",
+        ) from exc
 
 def get_transaction(
     db: Session,
     Transaction_id: int
 ) -> Transaction | None:
 
-    return (
-        db.query(Transaction)
-        .filter(Transaction.id == Transaction_id)
-        .first()
-    )
-
+    return transaction_repository.get_transaction_by_id(db, Transaction_id)
 
 def get_transactions(
     db: Session
 ) -> list[Transaction]:
 
-    return db.query(Transaction).all()
+    return transaction_repository.get_transactions(db)
+
+def get_transaction(
+    db: Session,
+    Transaction_id: int
+) -> Transaction | None:
+
+    return transaction_repository.get_transaction_by_id(db, Transaction_id)
+
 
 
 def update_transaction(
@@ -70,9 +67,17 @@ def update_transaction(
     if transaction_data.transaction_type_id is not None:
         transaction.transaction_type_id = transaction_data.transaction_type_id
 
-    commit_db(db, transaction)
+    try:
+        db.commit()
+        db.refresh(transaction)
+        return transaction
 
-    return transaction
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to update transaction",
+        ) from exc
 
 
 def delete_transaction(
@@ -85,6 +90,14 @@ def delete_transaction(
     if Transaction is None:
         return None
 
-    commit_db(db, transaction)
+    try:
+        transaction_repository.delete_transaction(db, transaction)
+        db.commit()
+        return transaction
 
-    return transaction
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to delete transaction",
+        ) from exc

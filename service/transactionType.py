@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from fastapi import status
 
-from helper.commitDbHelper import commit_db
+from core.exception import AppException
+from repository import transactionType as transaction_type_repository
 from models.transactionType import TransactionType
 from schemas.common.transactionType import TransactionTypeCreate, TransactionTypeUpdate
 
@@ -16,27 +18,32 @@ def create_TransactionType(
         need_supplier=transactionTypeData.need_supplier
     )
 
-    commit_db(db, transactionType)
+    try:
+        transaction_type_repository.create(db, transactionType)
+        db.commit()
+        db.refresh(transactionType)
+        return transactionType
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create transaction type",
+        ) from exc
 
-    return transactionType
 
 def get_TransactionType(
     db: Session,
     TransactionType_id: int
 ) -> TransactionType | None:
 
-    return (
-        db.query(TransactionType)
-        .filter(TransactionType.id == TransactionType_id)
-        .first()
-    )
+    return transaction_type_repository.get_transaction_type_by_id(db, TransactionType_id)
 
 
 def get_TransactionTypes(
     db: Session
 ) -> list[TransactionType]:
 
-    return db.query(TransactionType).all()
+    return transaction_type_repository.get_transaction_types(db)
 
 
 def update_TransactionType(
@@ -59,9 +66,17 @@ def update_TransactionType(
     if TransactionType_data.need_supplier is not None:
         transactionType.need_supplier = TransactionType_data.need_supplier
 
-    commit_db(db, transactionType)
+    try:
+        db.commit()
+        db.refresh(transactionType)
+        return transactionType
 
-    return TransactionType
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to update transaction type",
+        ) from exc
 
 
 def delete_TransactionType(
@@ -74,6 +89,15 @@ def delete_TransactionType(
     if transactionType is None:
         return None
 
-    commit_db(db, transactionType)
+    try:
+        transaction_type_repository.delete_transaction_type(db, transactionType)
+        db.commit()
+        db.refresh(transactionType)
+        return transactionType
 
-    return transactionType
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to update transaction type",
+        ) from exc

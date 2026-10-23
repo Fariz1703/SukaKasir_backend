@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from fastapi import status
 
-from helper.commitDbHelper import commit_db
+from core.exception import AppException
+from repository import unit as unit_repository 
 from models.unit import Unit
 from schemas.common.unit import UnitCreate, UnitUpdate
 
@@ -15,9 +17,18 @@ def create_unit(
         description=unit_data.description
     )
 
-    commit_db(db, unit)
+    try:
+        unit_repository.create(db, unit)
+        db.commit()
+        db.refresh(unit)
+        return unit
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to create unit",
+        ) from exc
 
-    return unit
 
 
 def get_unit(
@@ -25,18 +36,13 @@ def get_unit(
     unit_id: int
 ) -> Unit | None:
 
-    return (
-        db.query(Unit)
-        .filter(Unit.id == unit_id)
-        .first()
-    )
-
+    return unit_repository.get_unit_by_id(db, unit_id)
 
 def get_units(
     db: Session
 ) -> list[Unit]:
 
-    return db.query(Unit).all()
+    return unit_repository.get_units(db)
 
 
 def update_unit(
@@ -56,9 +62,17 @@ def update_unit(
     if unit_data.description is not None:
         unit.description = unit_data.description
 
-    commit_db(db, unit)
+    try:
+        db.commit()
+        db.refresh(unit)
+        return unit
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to update unit",
+        ) from exc
 
-    return unit
 
 
 def delete_unit(
@@ -71,6 +85,13 @@ def delete_unit(
     if unit is None:
         return None
     
-    commit_db(db, unit)
-
-    return unit
+    try:
+        unit_repository.delete_unit(db, unit)
+        db.commit()
+        return unit
+    except Exception as exc:
+        db.rollback()
+        raise AppException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            message="Failed to delete unit",
+        ) from exc

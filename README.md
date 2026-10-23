@@ -6,7 +6,9 @@ SukaKasir Backend adalah layanan backend yang dikembangkan untuk mendukung aplik
 
 Backend ini dibangun menggunakan **Python, FastAPI, SQLAlchemy, dan PostgreSQL**, dengan Alembic untuk mengelola migrasi database.
 
-Repository ini berfokus pada pengelolaan data dan penyediaan API yang dapat digunakan oleh frontend atau client lain untuk berkomunikasi dengan database melalui backend.
+Repository ini berfokus pada pengelolaan data dan penyediaan API yang dapat digunakan oleh frontend untuk berkomunikasi dengan database melalui backend.
+
+Untuk versi android silakan mengunjungi link berikut https://github.com/LackFos/suka-kasir-mobile.git
 
 ## 🎯 Project Goals
 

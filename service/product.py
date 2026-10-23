@@ -139,7 +139,7 @@ def update_product(
         return None
 
 
-    if product.image_key is not None:
+    if product_data.image_key is not None:
         product.image_key = product_data.image_key
     if product_data.name is not None:
         product.name = product_data.name

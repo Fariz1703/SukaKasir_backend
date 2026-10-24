@@ -94,7 +94,7 @@ SukaKasir_backend/
 ├── repository/       # Lapisan akses data
 ├── schemas/          # Schema request dan response
 ├── service/          # Logika layanan aplikasi
-├── .env.example      # Contoh variabel lingkungan
+├── .env.example      # Contoh variabel enviroment
 ├── alembic.ini       # Konfigurasi Alembic
 ├── main.py           # Entry point aplikasi FastAPI
 └── requirements.txt  # Daftar dependency Python
@@ -187,8 +187,13 @@ Secara default, aplikasi dapat diakses di `http://127.0.0.1:8000`.
 
 FastAPI menyediakan dokumentasi interaktif untuk melihat endpoint, schema, parameter, serta mencoba request dan response.
 
-- **Swagger UI:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **Base Url Local:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Swagger UI Web Local:** [http://127.0.0.1:8000/web/docs](http://127.0.0.1:8000/web/docs)
+- **Swagger UI Mobile Local:** [http://127.0.0.1:8000/mobile/docs](http://127.0.0.1:8000/mobile/docs)
+
 - **Base URL deployment:** [https://suka-kasir-backend.vercel.app](https://suka-kasir-backend.vercel.app)
+- **Swagger UI Web deployment:** [https://suka-kasir-backend.vercel.app/web/docs](https://suka-kasir-backend.vercel.app/web/docs)
+- **Swagger UI Mobile deployment:** [https://suka-kasir-backend.vercel.app](https://suka-kasir-backend.vercel.app/mobile/docs)
 
 Beberapa endpoint pemeriksaan yang didefinisikan langsung pada aplikasi:
 
@@ -201,9 +206,7 @@ Endpoint untuk modul kategori, satuan, produk, pemasok, dan transaksi dapat diti
 
 ## Repository Terkait
 
-- **Backend:** [Fariz1703/SukaKasir_backend](https://github.com/Fariz1703/SukaKasir_backend)
 - **Aplikasi Android:** [LackFos/suka-kasir-mobile](https://github.com/LackFos/suka-kasir-mobile)
-- **Deployment backend:** [suka-kasir-backend.vercel.app](https://suka-kasir-backend.vercel.app)
 
 
 Dikembangkan sebagai backend untuk aplikasi SukaKasir dengan Python, FastAPI, dan PostgreSQL.

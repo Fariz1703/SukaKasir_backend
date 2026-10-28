@@ -8,7 +8,10 @@ from sqlalchemy.orm import Session
 from database.dependency import get_db
 from schemas.common.respons import ResponseSchema
 
-from core.exception import AppException
+from core.exception import (
+    AppException,
+    app_exception_handler,
+)
 
 #web router
 from api.web.category import router as web_category_router
@@ -20,6 +23,8 @@ from api.web.transactionItem import router as web_transaction_item_router
 from api.web.productSupplier import router as web_product_supplier_router
 from api.web.supplier import router as web_supplier_router
 from api.web.createTransaction import router as web_create_transaction_router
+from api.web.role import router as web_role_router
+from api.web.users import router as web_users_router
 
 #mobile route
 from api.mobile.V1.createTransaction import router as mobile_create_transaction_router
@@ -50,6 +55,8 @@ app_web.include_router(web_transaction_item_router)
 app_web.include_router(web_product_supplier_router)
 app_web.include_router(web_supplier_router)
 app_web.include_router(web_create_transaction_router)
+app_web.include_router(web_role_router)
+app_web.include_router(web_users_router)
 
 #Mobile Route
 app_mobile.include_router(mobile_create_transaction_router)
@@ -64,22 +71,18 @@ app = FastAPI(title="Main API")
 app.mount("/web", app_web)
 app.mount("/mobile", app_mobile)
 
-@app.exception_handler(AppException)
-async def app_exception_handler(
-    request: Request,
-    exc: AppException,
-):
-    response = ResponseSchema(
-        success=False,
-        status_code=exc.status_code,
-        message=exc.message,
-        data=exc.data,
-    )
-
-    return JSONResponse(
-        status_code=exc.status_code,
-        content=response.model_dump(),
-    )
+app.add_exception_handler(
+    AppException,
+    app_exception_handler,
+)
+app_web.add_exception_handler(
+    AppException,
+    app_exception_handler,
+)
+app_mobile.add_exception_handler(
+    AppException,
+    app_exception_handler,
+)
 
 @app.get("/")
 def root():

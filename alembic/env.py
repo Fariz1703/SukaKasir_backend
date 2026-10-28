@@ -10,7 +10,7 @@ from core.config import settings
 from database.database import Base
 import models
 
-# run auto base on model -- alembic revision --autogenerate -m "initial migration" --
+# run auto base on model -- alembic revision --autogenerate -m "{Your Message}" --
 # create table -- alembic upgrade --
 
 # this is the Alembic Config object, which provides

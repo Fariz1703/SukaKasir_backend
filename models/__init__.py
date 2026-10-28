@@ -6,3 +6,5 @@ from .transactionItem import TransactionItem
 from .unit import Unit
 from .supplier import Supplier
 from .productSupplier import ProductSupplier
+from .roles import Roles
+from .users import Users

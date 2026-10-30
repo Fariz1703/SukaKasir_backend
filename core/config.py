@@ -7,6 +7,10 @@ class Settings(BaseSettings):
     FILEBASE_ACCESS_KEY: str
     FILEBASE_SECRET_KEY: str
     FILEBASE_BUCKET: str
+
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
     
     class Config:
         env_file = ".env"

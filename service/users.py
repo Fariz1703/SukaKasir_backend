@@ -4,7 +4,7 @@ from fastapi import status
 from sqlalchemy import select
 
 from core.exception import AppException
-from core.pwSecurity import hash_password
+from core.security import hash_password
 from repository import users as user_repository
 from models.users import Users
 from schemas.common.users import UsersCreate, UsersUpdate
@@ -48,7 +48,6 @@ def create_user(
 
     except Exception as exc:
         db.rollback()
-        logger.exception("Failed to create user")
 
         raise AppException(
             status_code=500,

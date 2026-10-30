@@ -22,6 +22,15 @@ def get_users(
 ) -> list[Users]:
     return db.query(Users).all()
 
+def get_user_by_email(
+    db: Session,
+    email: str
+) -> Users | None:
+    return (
+        db.query(Users)
+        .filter(Users.email == email)
+        .first()
+    )
 
 def get_some_users(
     db: Session,

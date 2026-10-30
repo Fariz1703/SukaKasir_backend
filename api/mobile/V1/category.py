@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 from core.exception import AppException
 from database.dependency import get_db
 from schemas.common.respons import ResponseSchema
+from core.depedency import get_current_user
+from models.users import Users
 from schemas.common.category import (
     CategoryCreate,
     CategoryResponse,
@@ -32,7 +34,8 @@ router = APIRouter(
 )
 def create(
     category_data: CategoryCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Users = Depends(get_current_user)
 ):
     category = create_category(db, category_data)
 

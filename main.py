@@ -13,6 +13,10 @@ from core.exception import (
     app_exception_handler,
 )
 
+from fastapi import Depends
+
+from core.depedency import get_current_user
+
 #web router
 from api.web.category import router as web_category_router
 from api.web.unit import router as web_unit_router
@@ -34,6 +38,12 @@ from api.mobile.V1.supplier import router as mobile_supplier_router
 from api.mobile.V1.unit import router as mobile_unit_router
 from api.mobile.V1.transactionType import router as mobile_transactionType_router
 
+#common route
+from api.common.auth import router as common_auth_router
+
+AUTH_REQUIRED = [
+    Depends(get_current_user)
+]
 
 app_mobile = FastAPI(
     title="Mobile API",
@@ -46,27 +56,81 @@ app_web = FastAPI(
     openapi_url="/web/openapi.json",
 )
 # menjalankan perintah uvicorn main:app --reload untuk menjalankan server
-app_web.include_router(web_category_router)
-app_web.include_router(web_unit_router)
-app_web.include_router(web_transaction_type_router)
-app_web.include_router(web_product_router)
-app_web.include_router(web_transaction_router)
-app_web.include_router(web_transaction_item_router)
-app_web.include_router(web_product_supplier_router)
-app_web.include_router(web_supplier_router)
-app_web.include_router(web_create_transaction_router)
-app_web.include_router(web_role_router)
-app_web.include_router(web_users_router)
+app_web.include_router(
+    web_category_router,
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_unit_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_transaction_type_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_product_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_transaction_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_transaction_item_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_product_supplier_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_supplier_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_create_transaction_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_role_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_web.include_router(
+    web_users_router, 
+)
+app_web.include_router(common_auth_router)
 
 #Mobile Route
-app_mobile.include_router(mobile_create_transaction_router)
-app_mobile.include_router(mobile_product_router)
-app_mobile.include_router(mobile_category_router)
-app_mobile.include_router(mobile_supplier_router)
-app_mobile.include_router(mobile_unit_router)
-app_mobile.include_router(mobile_transactionType_router)
+app_mobile.include_router(
+    mobile_create_transaction_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_mobile.include_router(
+    mobile_product_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_mobile.include_router(
+    mobile_category_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_mobile.include_router(
+    mobile_supplier_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_mobile.include_router(
+    mobile_unit_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_mobile.include_router(
+    mobile_transactionType_router, 
+    dependencies=AUTH_REQUIRED
+)
+app_mobile.include_router(common_auth_router)
 
 app = FastAPI(title="Main API")
+
+
 
 app.mount("/web", app_web)
 app.mount("/mobile", app_mobile)

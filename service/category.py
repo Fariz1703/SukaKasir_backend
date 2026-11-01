@@ -1,6 +1,8 @@
+
+
 from sqlalchemy import exc
 from sqlalchemy.orm import Session
-from fastapi import status
+from fastapi import  status
 
 from core.exception import AppException
 from models.category import Category
@@ -8,6 +10,8 @@ from repository import category as category_repository
 from schemas.common import category
 from schemas.common.category import CategoryCreate, CategoryUpdate
 
+import logging
+logger = logging.getLogger(__name__)
 
 def create_category(
     db: Session,
@@ -69,11 +73,15 @@ def update_category(
         db.refresh(category)
         return category
 
+
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create category")
+
         raise AppException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message="Failed to update category",
+            status_code=500,
+            message="Failed to create category"
         ) from exc
 
 
@@ -95,7 +103,10 @@ def delete_category(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create category")
+
         raise AppException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message="Failed to delete category",
+            status_code=500,
+            message="Failed to create category"
         ) from exc

@@ -14,6 +14,9 @@ from repository import productSupplier as product_supplier_repository
 from repository import transactionType as transaction_type_repository
 from repository import transactionItem as transaction_item_repository
 
+import logging
+logger = logging.getLogger(__name__)
+
 def create_transaction_item_out(
     db: Session,
     transaction_item_data: TransactionItemCreate,
@@ -60,6 +63,9 @@ def create_transaction_item_out(
         return transaction_item
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create transaction item")
+
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to create transaction item",
@@ -117,6 +123,9 @@ def create_transaction_item_in(
         return transaction_item
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create transaction item")
+
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to create transaction item",
@@ -270,6 +279,8 @@ def update_transaction_item_out(
         return transaction_item
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to update transaction item")
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to create transaction item",
@@ -347,6 +358,8 @@ def update_transaction_item_in(
         return transaction_item
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to update transaction item")
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to update transaction item",
@@ -392,6 +405,8 @@ def delete_transaction_item(
         db.commit()
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to delete transaction item")
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to delete transaction item",

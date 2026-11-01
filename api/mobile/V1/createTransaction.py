@@ -31,12 +31,12 @@ def create(
     if create_transaction is None:
         raise AppException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            message="Failed to create Product"
+            message="Failed to create Transaction"
         )
     
     return{
         "success" : True,
         "status_code": status.HTTP_201_CREATED,
-        "message" : "Product created succesfully",
+        "message" : "Transaction created succesfully",
         "data" : create_transaction
     }

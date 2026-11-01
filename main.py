@@ -9,6 +9,8 @@ from database.dependency import get_db
 from schemas.common.respons import ResponseSchema
 
 from core.exception import AppException
+import logging
+logger = logging.getLogger(__name__)
 
 #web router
 from api.web.category import router as web_category_router
@@ -64,7 +66,7 @@ app = FastAPI(title="Main API")
 app.mount("/web", app_web)
 app.mount("/mobile", app_mobile)
 
-@app.exception_handler(AppException)
+
 async def app_exception_handler(
     request: Request,
     exc: AppException,
@@ -80,6 +82,17 @@ async def app_exception_handler(
         status_code=exc.status_code,
         content=response.model_dump(),
     )
+
+
+app.exception_handler(AppException)(app_exception_handler)
+
+app_mobile.exception_handler(AppException)(
+    app_exception_handler
+)
+
+app_web.exception_handler(AppException)(
+    app_exception_handler
+)
 
 @app.get("/")
 def root():

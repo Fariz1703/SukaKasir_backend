@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session  
-from fastapi import status
+from fastapi import  status
 
 from core.exception import AppException
 from repository import transaction as transaction_repository
@@ -7,6 +7,8 @@ from models.transaction import Transaction
 from schemas.common.transaction import TransactionCreate, TransactionUpdate
 from service.transactionType import get_TransactionType
 
+import logging
+logger = logging.getLogger(__name__)
 
 def create_transaction(
     db: Session,
@@ -26,9 +28,12 @@ def create_transaction(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create supplier")
+
         raise AppException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message=f"{repr(exc)}",
+            status_code=500,
+            message="Failed to create supplier"
         ) from exc
 
 def get_transaction(
@@ -74,6 +79,9 @@ def update_transaction(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to update transaction")
+
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to update transaction",
@@ -97,6 +105,9 @@ def delete_transaction(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to delete transaction")
+
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to delete transaction",

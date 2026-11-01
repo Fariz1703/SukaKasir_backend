@@ -7,6 +7,9 @@ from models.product import Product
 from schemas.common.product import ProductCreate, ProductUpdate,ProductResponse
 from core.storage import get_image_url
 
+import logging
+logger = logging.getLogger(__name__)
+
 def create_product(
     db: Session,
     product_data: ProductCreate,
@@ -59,9 +62,12 @@ def create_product(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create product")
+
         raise AppException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message="Failed to create product",
+            status_code=500,
+            message="Failed to create product"
         ) from exc
 
 
@@ -71,7 +77,16 @@ def get_product(
     product_id: int
 ) -> Product | None:
 
-    return product_repository.get_product_by_id(db, product_id)
+    product = product_repository.get_product_by_id(db, product_id)
+
+    if product is None:
+        raise AppException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            message="Product not found",
+        )
+
+
+    return product
 
 def get_some_product(
     db: Session,
@@ -214,7 +229,10 @@ def delete_product(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create product")
+
         raise AppException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message="Failed to delete product",
+            status_code=500,
+            message="Failed to create product"
         ) from exc

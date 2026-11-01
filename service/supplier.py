@@ -6,6 +6,9 @@ from models.supplier import Supplier
 from repository import supplier as supplier_repository
 from schemas.common.supplier import SupplierCreate, SupplierUpdate
 
+import logging
+logger = logging.getLogger(__name__)
+
 def create_supplier(
     db: Session,
     supplier_data: SupplierCreate
@@ -24,6 +27,9 @@ def create_supplier(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create supplier")
+
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to create supplier",
@@ -67,6 +73,9 @@ def update_supplier(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to update supplier")
+
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to update supplier",
@@ -88,6 +97,9 @@ def delete_supplier(
         return supplier
 
     except Exception as exc:
+
+        logger.exception("Failed to delete supplier")
+
         db.rollback()
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

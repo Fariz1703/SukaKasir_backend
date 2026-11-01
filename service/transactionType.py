@@ -5,7 +5,8 @@ from core.exception import AppException
 from repository import transactionType as transaction_type_repository
 from models.transactionType import TransactionType
 from schemas.common.transactionType import TransactionTypeCreate, TransactionTypeUpdate
-
+import logging
+logger = logging.getLogger(__name__)
 
 def create_TransactionType(
     db: Session,
@@ -25,6 +26,7 @@ def create_TransactionType(
         return transactionType
     except Exception as exc:
         db.rollback()
+        logger.exception("Failed to create transaction type")
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to create transaction type",
@@ -73,6 +75,7 @@ def update_TransactionType(
 
     except Exception as exc:
         db.rollback()
+        logger.exception("Failed to update transaction type")
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to update transaction type",
@@ -96,7 +99,8 @@ def delete_TransactionType(
         return transactionType
 
     except Exception as exc:
-        db.rollback()
+        db.rollback()   
+        logger.exception("Failed to delete transaction type")
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to update transaction type",

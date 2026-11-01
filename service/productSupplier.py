@@ -1,12 +1,16 @@
 
 from sqlalchemy.orm import Session
-from fastapi import status
+from fastapi import logger, status
 
 from models.productSupplier import ProductSupplier
 from repository import productSupplier as product_supplier_repository
 from core.exception import AppException
 from schemas.common import category
 from schemas.common.productSupplier import ProductSupplierCreate, ProductSupplierUpdate
+
+
+import logging
+logger = logging.getLogger(__name__)
 
 def create_product_supplier(
     db: Session,
@@ -27,6 +31,9 @@ def create_product_supplier(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create product supplier")
+        
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to create product supplier",
@@ -71,6 +78,9 @@ def update_product_supplier(
 
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to update product supplier")
+
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to update product supplier",
@@ -93,7 +103,10 @@ def delete_product_supplier(
     
     except Exception as exc:
         db.rollback()
+
+        logger.exception("Failed to create supplier")
+
         raise AppException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message="Failed to delete product supplier",
+            status_code=500,
+            message="Failed to create supplier"
         ) from exc

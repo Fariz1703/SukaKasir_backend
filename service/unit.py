@@ -5,7 +5,8 @@ from core.exception import AppException
 from repository import unit as unit_repository 
 from models.unit import Unit
 from schemas.common.unit import UnitCreate, UnitUpdate
-
+import logging
+logger = logging.getLogger(__name__)
 
 def create_unit(
     db: Session,
@@ -24,6 +25,7 @@ def create_unit(
         return unit
     except Exception as exc:
         db.rollback()
+        logger.exception("Failed to create unit")
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to create unit",
@@ -68,6 +70,7 @@ def update_unit(
         return unit
     except Exception as exc:
         db.rollback()
+        logger.exception("Failed to update unit")
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to update unit",
@@ -91,6 +94,7 @@ def delete_unit(
         return unit
     except Exception as exc:
         db.rollback()
+        logger.exception("Failed to delete unit")
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to delete unit",

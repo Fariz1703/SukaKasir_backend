@@ -5,7 +5,6 @@ from core.exception import AppException
 from repository import transaction as transaction_repository
 from models.transaction import Transaction
 from schemas.common.transaction import TransactionCreate, TransactionUpdate
-from service.transactionType import get_TransactionType
 
 import logging
 logger = logging.getLogger(__name__)
@@ -29,11 +28,11 @@ def create_transaction(
     except Exception as exc:
         db.rollback()
 
-        logger.exception("Failed to create supplier")
+        logger.exception("Failed to create transaction")
 
         raise AppException(
             status_code=500,
-            message="Failed to create supplier"
+            message="Failed to create transaction"
         ) from exc
 
 def get_transaction(

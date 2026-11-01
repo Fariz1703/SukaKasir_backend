@@ -1,6 +1,6 @@
 
 from sqlalchemy.orm import Session
-from fastapi import logger, status
+from fastapi import  status
 
 from models.productSupplier import ProductSupplier
 from repository import productSupplier as product_supplier_repository
@@ -33,7 +33,7 @@ def create_product_supplier(
         db.rollback()
 
         logger.exception("Failed to create product supplier")
-        
+
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             message="Failed to create product supplier",

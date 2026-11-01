@@ -127,14 +127,14 @@ def create_transaction_item_switch(
         db: Session, 
         transaction_item_data: TransactionItemCreate
 ) -> TransactionItem:
-    get_transaction_item = product_repository.get_product_by_id(
+    get_transaction = transaction_repository.get_transaction_by_id(
         db,
         transaction_item_data.transaction_id
     )   
     
     get_transaction_type_item = transaction_type_repository.get_transaction_type_by_id(
         db,
-        get_transaction_item.transaction_type_id
+        get_transaction.transaction_type_id
     )
 
     if get_transaction_type_item.need_supplier is True:

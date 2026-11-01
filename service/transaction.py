@@ -28,7 +28,7 @@ def create_transaction(
         db.rollback()
         raise AppException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            message="Failed to create supplier",
+            message=f"{repr(exc)}",
         ) from exc
 
 def get_transaction(

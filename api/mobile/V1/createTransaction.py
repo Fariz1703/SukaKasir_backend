@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, status
 from core.exception import AppException
 from sqlalchemy.orm import Session
 
-from core.exception import AppException
 from database.dependency import get_db
 from schemas.common.respons import ResponseSchema
 from schemas.common.createTransaction import (

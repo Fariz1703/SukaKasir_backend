@@ -17,7 +17,7 @@ def get_supplier_by_id(
         .first()
     )
 
-def get_product_suppliers(
+def get_suppliers(
     db: Session
 ) -> list[Supplier]:
     return db.query(Supplier).all()

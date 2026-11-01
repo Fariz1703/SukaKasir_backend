@@ -3,8 +3,9 @@ from pydantic import BaseModel
 
 class CreateTransactionItem(BaseModel):
     quantity: int
-    product_supplier_id: int | None = None
-    product_id: int
+    supplier_id: int | None = None
+    product_id: int | None = None
+    buy_price: int | None = None
 
 
 class CreateTransactionCreate(BaseModel):

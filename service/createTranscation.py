@@ -1,12 +1,14 @@
 from sqlalchemy.orm import Session
 
 from service.transaction import create_transaction
+from service.productSupplier import create_product_supplier
 from service.transactionItem import create_transaction_item_switch
 from service.product import get_product
 from schemas.common.transaction import (
     TransactionCreate,
     
 )
+from schemas.common.productSupplier import ProductSupplierCreate
 from schemas.common.transactionItem import TransactionItemCreate
 from schemas.common.createTransaction import CreateTransactionCreate,CreateTransactionResponse,TransactionItemResponse
 
@@ -15,8 +17,10 @@ def CreateCreateTransaction(
     transcation_data: CreateTransactionCreate
 ) -> CreateTransactionResponse:
 
+    
 
     payload = TransactionCreate(transaction_type_id=transcation_data.transaction_type_id)
+
     
     TransactionNumber = create_transaction(
            db=db,
@@ -32,13 +36,32 @@ def CreateCreateTransaction(
         item.product_id
         )
 
-        transaction_item=TransactionItemCreate(
-            transaction_id=TransactionNumber.id,
-            product_id=product.id,
-            product_supplier_id=item.product_supplier_id,
-            unit_price=product.sell_price,
-            quantity=item.quantity,
-        ) 
+        product_supplier = None
+        
+        if item.supplier_id is not None:
+            product_supplier = create_product_supplier(
+                db=db,
+                product_supplier_data=ProductSupplierCreate(
+                    product_id=item.product_id,
+                    supplier_id=item.supplier_id,
+                    buy_price=item.buy_price
+                )
+            )
+            transaction_item=TransactionItemCreate(
+                transaction_id=TransactionNumber.id,
+                product_id=product.id,
+                product_supplier_id=product_supplier.id,
+                unit_price=product.sell_price,
+                quantity=item.quantity,
+            ) 
+        else:
+            transaction_item=TransactionItemCreate(
+                transaction_id=TransactionNumber.id,
+                product_id=product.id,
+                product_supplier_id=None,
+                unit_price=product.sell_price,
+                quantity=item.quantity,
+            ) 
 
         saved_item = create_transaction_item_switch(
             db=db,

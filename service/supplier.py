@@ -3,7 +3,7 @@ from fastapi import status
 
 from core.exception import AppException
 from models.supplier import Supplier
-from repository import productSupplier as productSupplier_repository
+from repository import supplier as supplier_repository
 from schemas.common.supplier import SupplierCreate, SupplierUpdate
 
 def create_supplier(
@@ -17,7 +17,7 @@ def create_supplier(
     )
 
     try:
-        productSupplier_repository.create(db, supplier)
+        supplier_repository.create(db, supplier)
         db.commit()
         db.refresh(supplier)
         return supplier
@@ -35,13 +35,13 @@ def get_supplier(
     supplier_id: int
 ) -> Supplier | None:
 
-    return productSupplier_repository.get_product_supplier_by_id(db, supplier_id)
+    return supplier_repository.get_supplier_by_id(db, supplier_id)
 
 def get_suppliers(
     db: Session
 ) -> list[Supplier]:
 
-    return productSupplier_repository.get_product_suppliers(db)
+    return supplier_repository.get_suppliers(db)
 
 def update_supplier(
     db: Session,
@@ -83,7 +83,7 @@ def delete_supplier(
         return None
 
     try:
-        productSupplier_repository.delete_product_supplier(db, supplier)
+        supplier_repository.delete_product_supplier(db, supplier)
         db.commit()
         return supplier
 

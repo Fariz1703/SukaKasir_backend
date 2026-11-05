@@ -1,6 +1,6 @@
 # SukaKasir Backend
 
-REST API backend untuk **SukaKasir**, aplikasi kasir yang menyediakan pengelolaan data produk dan pencatatan transaksi. Repository ini berfokus pada penyediaan API serta integrasi database agar aplikasi client dapat berkomunikasi dengan data secara terstruktur.
+REST API backend for **SukaKasir**, a cashier application that provides product data management and transaction recording. This repository focuses on providing APIs and database integration, allowing client applications to communicate with data in a structured manner.
 
 <p align="left">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
@@ -9,51 +9,51 @@ REST API backend untuk **SukaKasir**, aplikasi kasir yang menyediakan pengelolaa
   <img src="https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white" alt="SQLAlchemy" />
 </p>
 
-## Daftar Isi
+## Table of Contents
 
-- [Tentang Proyek](#tentang-proyek)
-- [Fitur Utama](#fitur-utama)
-- [Teknologi](#teknologi)
-- [Arsitektur](#arsitektur)
-- [Menjalankan Proyek Secara Lokal](#menjalankan-proyek-secara-lokal)
-- [Dokumentasi dan Endpoint](#dokumentasi-dan-endpoint)
-- [Repository Terkait](#repository-terkait)
+- [About the Project](#about-the-project)
+- [Key Features](#key-features)
+- [Technologies](#technologies)
+- [Architecture](#architecture)
+- [Running the Project Locally](#running-the-project-locally)
+- [Documentation and Endpoints](#documentation-and-endpoints)
+- [Related Repository](#related-repository)
 
-## Tentang Proyek
+## About the Project
 
-SukaKasir Backend merupakan layanan backend untuk mendukung kebutuhan pengelolaan data pada aplikasi kasir. Backend menyediakan endpoint untuk entitas seperti kategori, satuan, produk, pemasok, serta transaksi dan detail transaksi.
+SukaKasir Backend is a backend service designed to support data management requirements for a cashier application. It provides endpoints for entities such as categories, units, products, suppliers, transactions, and transaction items.
 
-Proyek ini dibuat sebagai bagian dari pengembangan aplikasi SukaKasir sekaligus portofolio pengembangan backend. Fokus implementasinya meliputi perancangan REST API, pemisahan tanggung jawab antarbagian aplikasi, integrasi database relasional, validasi data, serta pengelolaan perubahan skema database.
+This project was developed as part of the SukaKasir application development process and as a backend development portfolio project. Its implementation focuses on REST API design, separation of responsibilities between application layers, relational database integration, data validation, and database schema change management.
 
-## Fitur Utama
+## Key Features
 
-| Modul | Deskripsi |
+| Module | Description |
 |---|---|
-| **Category Management** | Mengelola kategori untuk pengelompokan produk. |
-| **Unit Management** | Mengelola satuan yang digunakan oleh produk. |
-| **Product Management** | Menyediakan API untuk pengelolaan data produk. |
-| **Supplier Management** | Mengelola data pemasok. |
-| **Product–Supplier** | Mengelola relasi antara produk dan pemasok. |
-| **Transaction Management** | Mengelola data transaksi. |
-| **Transaction Items** | Menyimpan dan mengelola detail item yang terkait dengan transaksi. |
-| **Transaction Types** | Mengelola tipe transaksi. |
+| **Category Management** | Manage categories used to organize products. |
+| **Unit Management** | Manage units of measurement used by products. |
+| **Product Management** | Provide APIs for managing product data. |
+| **Supplier Management** | Manage supplier information. |
+| **Product–Supplier** | Manage relationships between products and suppliers. |
+| **Transaction Management** | Manage transaction records. |
+| **Transaction Items** | Store and manage item details associated with transactions. |
+| **Transaction Types** | Manage transaction types. |
 
-## Teknologi
+## Technologies
 
-| Teknologi | Peran |
+| Technology | Role |
 |---|---|
-| [Python](https://www.python.org/) | Bahasa pemrograman backend. |
-| [FastAPI](https://fastapi.tiangolo.com/) | Framework untuk membangun REST API. |
-| [Pydantic](https://docs.pydantic.dev/) | Validasi dan struktur data request/response. |
-| [SQLAlchemy](https://www.sqlalchemy.org/) | ORM untuk berinteraksi dengan database. |
-| [PostgreSQL](https://www.postgresql.org/) | Database relasional. |
-| [Alembic](https://alembic.sqlalchemy.org/) | Migrasi skema database. |
-| [Uvicorn](https://www.uvicorn.org/) | ASGI server untuk menjalankan aplikasi FastAPI. |
-| [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) | SDK Python yang tersedia untuk integrasi layanan penyimpanan berbasis S3. |
+| [Python](https://www.python.org/) | Backend programming language. |
+| [FastAPI](https://fastapi.tiangolo.com/) | Framework for building REST APIs. |
+| [Pydantic](https://docs.pydantic.dev/) | Request and response data validation and structuring. |
+| [SQLAlchemy](https://www.sqlalchemy.org/) | ORM for database interaction. |
+| [PostgreSQL](https://www.postgresql.org/) | Relational database. |
+| [Alembic](https://alembic.sqlalchemy.org/) | Database schema migration management. |
+| [Uvicorn](https://www.uvicorn.org/) | ASGI server for running the FastAPI application. |
+| [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) | Python SDK available for integration with S3-based storage services. |
 
-## Arsitektur
+## Architecture
 
-Secara umum, request dari frontend atau API client diteruskan ke router FastAPI, diproses menggunakan schema dan logika aplikasi, lalu berinteraksi dengan database melalui SQLAlchemy.
+In general, requests from the frontend or API client are forwarded to FastAPI routers, processed using schemas and application logic, and then interact with the database through SQLAlchemy.
 
 ```text
 Frontend / API Client
@@ -66,13 +66,13 @@ Frontend / API Client
       Schema
         |
         v
-     Service
+      Service
         |
         v
-     Repository
+    Repository
         |
         v
-   SQLAlchemy ORM
+  SQLAlchemy ORM
         |
         v
     PostgreSQL
@@ -81,43 +81,43 @@ Frontend / API Client
    HTTP Response
 ```
 
-### Struktur Repository
+### Repository Structure
 
 ```text
 SukaKasir_backend/
-├── alembic/          # Riwayat dan konfigurasi migrasi database
-├── api/              # Router dan endpoint API
-├── core/             # Konfigurasi serta komponen inti aplikasi
-├── database/         # Koneksi database dan session
-├── helper/           # Fungsi bantu yang digunakan aplikasi
-├── models/           # Model/entitas database
-├── repository/       # Lapisan akses data
-├── schemas/          # Schema request dan response
-├── service/          # Logika layanan aplikasi
-├── .env.example      # Contoh variabel enviroment
-├── alembic.ini       # Konfigurasi Alembic
-├── main.py           # Entry point aplikasi FastAPI
-└── requirements.txt  # Daftar dependency Python
+├── alembic/          # Database migration history and configuration
+├── api/              # API routers and endpoints
+├── core/             # Application configuration and core components
+├── database/         # Database connections and sessions
+├── helper/           # Utility functions used by the application
+├── models/           # Database models/entities
+├── repository/       # Data access layer
+├── schemas/          # Request and response schemas
+├── service/          # Application service logic
+├── .env.example      # Example environment variables
+├── alembic.ini       # Alembic configuration
+├── main.py           # FastAPI application entry point
+└── requirements.txt  # Python dependencies
 ```
 
-## Menjalankan Proyek Secara Lokal
+## Running the Project Locally
 
-### Prasyarat
+### Prerequisites
 
-Pastikan perangkat sudah memiliki:
+Make sure the following tools are installed on your machine:
 
-- Python dan `pip`.
+- Python and `pip`.
 - PostgreSQL.
 - Git.
 
-### 1. Clone repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Fariz1703/SukaKasir_backend.git
 cd SukaKasir_backend
 ```
 
-### 2. Buat dan aktifkan virtual environment
+### 2. Create and Activate a Virtual Environment
 
 ```bash
 python -m venv .venv
@@ -135,78 +135,91 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3. Install dependency
+### 3. Install Dependencies
 
 ```bash
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Siapkan database dan environment variables
+### 4. Set Up the Database and Environment Variables
 
-Buat database PostgreSQL, misalnya:
+Create a PostgreSQL database, for example:
 
 ```sql
 CREATE DATABASE sukakasir;
 ```
 
-Salin file contoh environment:
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Di Windows Command Prompt, gunakan `copy .env.example .env`. Selanjutnya, periksa dan sesuaikan isi `.env` dengan konfigurasi lokal. Contoh format variabel:
+On Windows Command Prompt, use `copy .env.example .env` instead.
+
+Next, review and adjust the `.env` file according to your local configuration. Example environment variables:
 
 ```env
-DATABASE_URL=postgresql+psycopg://postgres:password_anda@localhost:5432/sukakasir
-FILEBASE_ACCESS_KEY=access_key_anda
-FILEBASE_SECRET_KEY=secret_key_anda
-FILEBASE_BUCKET=gambar-produk
+DATABASE_URL=postgresql+psycopg://postgres:your_password@localhost:5432/sukakasir
+FILEBASE_ACCESS_KEY=your_access_key
+FILEBASE_SECRET_KEY=your_secret_key
+FILEBASE_BUCKET=product-images
 ```
 
-Sesuaikan username, password, host, port, nama database, serta kredensial penyimpanan dengan lingkungan Anda. Jangan commit file `.env` atau kredensial asli ke repository publik.
+Adjust the username, password, host, port, database name, and storage credentials according to your environment.
 
-### 5. Jalankan migrasi database
+Do not commit the `.env` file or actual credentials to a public repository.
+
+### 5. Run Database Migrations
 
 ```bash
 alembic upgrade head
 ```
 
-Perintah ini menerapkan migrasi Alembic yang tersedia ke database yang sudah dikonfigurasi.
+This command applies the available Alembic migrations to the configured database.
 
-### 6. Jalankan server development
+### 6. Run the Development Server
 
 ```bash
 uvicorn main:app --reload
 ```
 
-Secara default, aplikasi dapat diakses di `http://127.0.0.1:8000`.
+By default, the application will be accessible at:
 
-## Dokumentasi dan Endpoint
+`http://127.0.0.1:8000`
 
-FastAPI menyediakan dokumentasi interaktif untuk melihat endpoint, schema, parameter, serta mencoba request dan response.
+## Documentation and Endpoints
 
-- **Base Url Local:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- **Swagger UI Web Local:** [http://127.0.0.1:8000/web/docs](http://127.0.0.1:8000/web/docs)
-- **Swagger UI Mobile Local:** [http://127.0.0.1:8000/mobile/docs](http://127.0.0.1:8000/mobile/docs)
+FastAPI provides interactive documentation for viewing endpoints, schemas, parameters, and testing requests and responses.
 
-- **Base URL deployment:** [https://suka-kasir-backend.vercel.app](https://suka-kasir-backend.vercel.app)
-- **Swagger UI Web deployment:** [https://suka-kasir-backend.vercel.app/web/docs](https://suka-kasir-backend.vercel.app/web/docs)
-- **Swagger UI Mobile deployment:** [https://suka-kasir-backend.vercel.app](https://suka-kasir-backend.vercel.app/mobile/docs)
+**Local Environment:**
 
-Beberapa endpoint pemeriksaan yang didefinisikan langsung pada aplikasi:
+- **Local Base URL:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Local Web Swagger UI:** [http://127.0.0.1:8000/web/docs](http://127.0.0.1:8000/web/docs)
+- **Local Mobile Swagger UI:** [http://127.0.0.1:8000/mobile/docs](http://127.0.0.1:8000/mobile/docs)
 
-| Method | Path | Kegunaan |
+**Deployment Environment:**
+
+- **Deployment Base URL:** [https://suka-kasir-backend.vercel.app](https://suka-kasir-backend.vercel.app)
+- **Deployment Web Swagger UI:** [https://suka-kasir-backend.vercel.app/web/docs](https://suka-kasir-backend.vercel.app/web/docs)
+- **Deployment Mobile Swagger UI:** [https://suka-kasir-backend.vercel.app/mobile/docs](https://suka-kasir-backend.vercel.app/mobile/docs)
+
+The following health-check endpoints are defined directly in the application:
+
+| Method | Path | Description |
 |---|---|---|
-| `GET` | `/` | Memeriksa apakah API berjalan. |
-| `GET` | `/test-db` | Memeriksa koneksi database dengan query sederhana. |
+| `GET` | `/` | Checks whether the API is running. |
+| `GET` | `/test-db` | Checks the database connection using a simple query. |
 
-Endpoint untuk modul kategori, satuan, produk, pemasok, dan transaksi dapat ditinjau melalui Swagger UI setelah server dijalankan. Path serta format payload spesifik tidak dicantumkan di sini agar tetap mengikuti implementasi aktual.
+Endpoints for category, unit, product, supplier, and transaction modules can be explored through Swagger UI after starting the server.
 
-## Repository Terkait
+Specific paths and payload formats are not listed here to ensure they remain consistent with the actual implementation.
 
-- **Aplikasi Android:** [LackFos/suka-kasir-mobile](https://github.com/LackFos/suka-kasir-mobile)
+## Related Repository
 
+- **Android Application:** [LackFos/suka-kasir-mobile](https://github.com/LackFos/suka-kasir-mobile)
 
-Dikembangkan sebagai backend untuk aplikasi SukaKasir dengan Python, FastAPI, dan PostgreSQL.
+---
+
+Developed as the backend for the SukaKasir application using Python, FastAPI, and PostgreSQL.
